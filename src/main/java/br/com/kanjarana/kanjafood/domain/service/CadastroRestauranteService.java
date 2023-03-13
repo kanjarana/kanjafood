@@ -1,6 +1,5 @@
 package br.com.kanjarana.kanjafood.domain.service;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -9,7 +8,6 @@ import br.com.kanjarana.kanjafood.domain.model.Cozinha;
 import br.com.kanjarana.kanjafood.domain.model.Restaurante;
 import br.com.kanjarana.kanjafood.domain.repository.CozinhaRepository;
 import br.com.kanjarana.kanjafood.domain.repository.RestauranteRepository;
-import ch.qos.logback.core.joran.util.beans.BeanUtil;
 
 @Controller
 public class CadastroRestauranteService {
@@ -34,20 +32,6 @@ public class CadastroRestauranteService {
 		return restauranteRepository.salvar(restaurante);
 	}
 	
-	public Restaurante atualizar(Restaurante restaurante) {
-		
-		Long cozinhaId = restaurante.getCozinha().getId();		
-		Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
-		
-		if (cozinha == null) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe cadastro de cozinha com o código: %d", 
-							cozinhaId));
-		}
-		return restauranteRepository.salvar(restaurante);		
-	}
-	
-
 }
 
 
