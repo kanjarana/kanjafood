@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,13 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.kanjarana.kanjafood.domain.exception.EntidadeNaoEncontradaException;
-import br.com.kanjarana.kanjafood.domain.model.Cozinha;
 import br.com.kanjarana.kanjafood.domain.model.Restaurante;
 import br.com.kanjarana.kanjafood.domain.repository.CozinhaRepository;
 import br.com.kanjarana.kanjafood.domain.repository.RestauranteRepository;
@@ -43,8 +40,8 @@ public class RestauranteController {
 	CadastroRestauranteService cadastroRestaurante;
 	
 	@GetMapping
-	public List<Restaurante> todos() {
-		List<Restaurante> restaurantes = restauranteRepository.todos();
+	public List<Restaurante> listar() {
+		List<Restaurante> restaurantes = restauranteRepository.listar();
 		
 		return restaurantes;
 	}
@@ -123,6 +120,8 @@ public class RestauranteController {
 			field.setAccessible(true);
 			
 			Object novoValor = ReflectionUtils.getField(field, origem);
+			
+			//			System.out.println(nomePropriedade + " = " + valorPropriedade + " = " + novoValor);
 			
 			ReflectionUtils.setField(field, destino, novoValor);
 			

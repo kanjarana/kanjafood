@@ -6,7 +6,7 @@ import br.com.kanjarana.kanjafood.domain.model.Cozinha;
 
 public interface CozinhaRepository {
 	
-	List<Cozinha> todos();
+	List<Cozinha> listar();
 	Cozinha buscar(Long id);
 	Cozinha salvar(Cozinha cozinha);
 	void remover(Long id);

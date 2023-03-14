@@ -20,8 +20,5 @@ public class Estado {
 	private Long id;
 	
 	@Column(nullable = false)
-	private String uf;
-	
-	@Column(nullable = false)
 	private String nome;
 }

@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +36,14 @@ public class CozinhaController {
 	
 	//@GetMapping(produces = ({MediaType.APPLICATION_JSON_VALUE})
 	@GetMapping	
-	public List<Cozinha> todas() {
-		return cozinhas.todos();
+	public List<Cozinha> listar() {
+		return cozinhas.listar();
 	}
 	
 	
 	@GetMapping(produces = {MediaType.APPLICATION_XML_VALUE})
 	public CozinhasXmlWrapper todasXml() {
-		return new CozinhasXmlWrapper(todas());
+		return new CozinhasXmlWrapper(listar());
 	}
 	
 //	@GetMapping("/{cozinhaId}")
@@ -78,7 +76,7 @@ public class CozinhaController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha salvar(@RequestBody Cozinha cozinha) {
+	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
 		return cadastroCozinha.salvar(cozinha);
 	}
 	
