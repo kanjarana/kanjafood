@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import br.com.kanjarana.kanjafood.KanjafoodApplication;
 import br.com.kanjarana.kanjafood.domain.model.Cozinha;
 import br.com.kanjarana.kanjafood.domain.repository.CozinhaRepository;
-import br.com.kanjarana.kanjafood.infrastructure.repository.CozinhaRepositoryImpl;
 
 public class RemoverCozinhaMain {
 	
@@ -17,12 +16,13 @@ public class RemoverCozinhaMain {
 				.web(WebApplicationType.NONE)
 				.run(args);
 		
-		CozinhaRepository cozinhas = applicationContext.getBean(CozinhaRepositoryImpl.class);
+		//CozinhaRepository cozinhas = applicationContext.getBean(CozinhaRepositoryImpl.class);
+		CozinhaRepository cozinhas = applicationContext.getBean(CozinhaRepository.class);
 		
 		Cozinha cozinha = new Cozinha();
 		cozinha.setId(1L);
 		
-		cozinhas.remover(cozinha.getId());
+		cozinhas.deleteById(cozinha.getId());
 	}
 
 }

@@ -1,6 +1,7 @@
 package br.com.kanjarana.kanjafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,12 @@ public class CozinhaController {
 	CadastroCozinhaService cadastroCozinha;
 	
 	@Autowired
-	CozinhaRepository cozinhas;
+	CozinhaRepository cozinhaRepository;
 	
 	//@GetMapping(produces = ({MediaType.APPLICATION_JSON_VALUE})
 	@GetMapping	
 	public List<Cozinha> listar() {
-		return cozinhas.listar();
+		return cozinhaRepository.findAll();
 	}
 	
 	
@@ -54,7 +55,7 @@ public class CozinhaController {
 //	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-		Cozinha cozinha = cozinhas.buscar(cozinhaId);
+		Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
 		
 //		return 	ResponseEntity.status(HttpStatus.OK).body(cozinha);
 //		return 	ResponseEntity.ok(cozinha);
@@ -66,8 +67,8 @@ public class CozinhaController {
 //				.headers(headers)
 //				.build();
 		
-		if (cozinha != null) {
-			return ResponseEntity.ok(cozinha);			
+		if (cozinha.isPresent()) {
+			return ResponseEntity.ok(cozinha.get());			
 		}
 		
 //		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -82,15 +83,15 @@ public class CozinhaController {
 	
 	@PutMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,  
-			@RequestBody Cozinha cozinha) {
+				@RequestBody Cozinha cozinha) {
 		
-		Cozinha cozinhaAtual = cozinhas.buscar(cozinhaId);  // attached
+		Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);  // attached
 		
-		if (cozinhaAtual != null) {
-			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+		if (cozinhaAtual.isPresent()) {
+			BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
 			
-			cozinhaAtual = cadastroCozinha.salvar(cozinhaAtual);
-			return ResponseEntity.ok(cozinhaAtual);
+			Cozinha cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
+			return ResponseEntity.ok(cozinhaSalva);
 		}
 		
 		return ResponseEntity.notFound().build();

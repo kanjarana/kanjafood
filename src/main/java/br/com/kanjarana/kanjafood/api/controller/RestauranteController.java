@@ -3,12 +3,14 @@ package br.com.kanjarana.kanjafood.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.kanjarana.kanjafood.domain.exception.EntidadeEmUsoException;
 import br.com.kanjarana.kanjafood.domain.exception.EntidadeNaoEncontradaException;
 import br.com.kanjarana.kanjafood.domain.model.Restaurante;
 import br.com.kanjarana.kanjafood.domain.repository.CozinhaRepository;
@@ -41,7 +44,7 @@ public class RestauranteController {
 	
 	@GetMapping
 	public List<Restaurante> listar() {
-		List<Restaurante> restaurantes = restauranteRepository.listar();
+		List<Restaurante> restaurantes = restauranteRepository.findAll();
 		
 		return restaurantes;
 	}
@@ -49,10 +52,10 @@ public class RestauranteController {
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
 		
-		Restaurante restaurante = restauranteRepository.buscar(restauranteId);
+		Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
 		
-		if (restaurante != null) {
-			return ResponseEntity.ok(restaurante);
+		if (restaurante.isPresent()) {
+			return ResponseEntity.ok(restaurante.get());
 		}
 		
 		return ResponseEntity.notFound().build();
@@ -74,14 +77,14 @@ public class RestauranteController {
 	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, 
 			@RequestBody Restaurante restaurante) {
 		try {
-			Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+			Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
 			
-			if (restauranteAtual != null) {				
-				BeanUtils.copyProperties(restaurante, restauranteAtual, "id");	
+			if (restauranteAtual.isPresent()) {				
+				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id");	
 				
-				restauranteAtual = cadastroRestaurante.salvar(restauranteAtual);
+				Restaurante restauranteSlavo = cadastroRestaurante.salvar(restauranteAtual.get());
 				
-				return ResponseEntity.ok(restauranteAtual); 
+				return ResponseEntity.ok(restauranteSlavo); 
 			}
 			
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -95,14 +98,14 @@ public class RestauranteController {
 	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, 
 			@RequestBody Map<String, Object> campos) {
 		
-		Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
-		if (restauranteAtual == null) {
+		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
+		if (restauranteAtual.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		merge(campos, restauranteAtual);
+		merge(campos, restauranteAtual.get());
 		
-		return atualizar(restauranteId, restauranteAtual);	
+		return atualizar(restauranteId, restauranteAtual.get());	
 	}
 
 	
@@ -126,7 +129,24 @@ public class RestauranteController {
 			ReflectionUtils.setField(field, destino, novoValor);
 			
 		});		
-	}	
+	}
+	
+	@DeleteMapping("/{restauranteId}")
+	public ResponseEntity<Restaurante> remover(@PathVariable Long restauranteId) {
+		
+		try {
+			cadastroRestaurante.excluir(restauranteId);
+			
+			return ResponseEntity.noContent().build();
+		}
+		catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.notFound().build();
+		}
+		catch (EntidadeEmUsoException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
+		
+	}
 }
 
 
