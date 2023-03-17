@@ -57,5 +57,18 @@ public class TesteController {
 				BigDecimal taxaFreteFinal) {
 		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
+	
+	@GetMapping("/restaurantes/com-frete-gratis")
+	public List<Restaurante> restaurantesComFreteGratis(String nome) {
+//		Specification<Restaurante> comFreteGratis = new RestauranteComFreteGratisEspec();
+//		Specification<Restaurante> comNomeSemelhante = new RestauranteComNomeSemelhanteEspec(nome);
+		
+//		return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
+		
+//		return restauranteRepository.findAll(comFreteGratis()
+//				.and(comNomeSemelhante(nome)));
+		
+		return restauranteRepository.findComFreteGratis(nome);
+	}
 
 }
