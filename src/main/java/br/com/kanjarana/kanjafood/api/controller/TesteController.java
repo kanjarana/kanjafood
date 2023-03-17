@@ -24,6 +24,11 @@ public class TesteController {
 	@Autowired
 	RestauranteRepository restauranteRepository;
 	
+	@GetMapping("/cozinhas/primeiro")
+	public Optional<Cozinha> buscarPrimeira() {
+		return cozinhaRepository.buscarPrimeiro();
+	}
+	
 	@GetMapping("/cozinhas/por-nome")
 	public List<Cozinha> cozinhasPorNome(String nome) {
 		return cozinhaRepository.nome(nome);
@@ -69,6 +74,11 @@ public class TesteController {
 //				.and(comNomeSemelhante(nome)));
 		
 		return restauranteRepository.findComFreteGratis(nome);
+	}
+	
+	@GetMapping("/restaurantes/primeiro")
+	public Optional<Restaurante> buscarPrimeiro() {
+		return restauranteRepository.buscarPrimeiro();
 	}
 
 }
