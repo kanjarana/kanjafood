@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.kanjarana.kanjafood.domain.exception.EstadoNaoEncontradoException;
+import br.com.kanjarana.kanjafood.domain.exception.NegocioException;
 import br.com.kanjarana.kanjafood.domain.model.Cidade;
 import br.com.kanjarana.kanjafood.domain.repository.CidadeRepository;
 import br.com.kanjarana.kanjafood.domain.service.CadastroCidadeService;
@@ -45,8 +47,14 @@ public class CidadeController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cidade adicionar(@RequestBody Cidade cidade) {
-		return cadastroCidade.salvar(cidade);
+		try {
+			return cadastroCidade.salvar(cidade);
+		}
+		catch (EstadoNaoEncontradoException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
 	}
+	
 	
 	@PutMapping("/{cidadeId}")
 	public Cidade atualizar(@PathVariable Long cidadeId,
@@ -55,7 +63,12 @@ public class CidadeController {
 
 		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
 	
-		return cadastroCidade.salvar(cidadeAtual);
+		try {
+			return cadastroCidade.salvar(cidadeAtual);
+		}
+		catch (EstadoNaoEncontradoException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
 	}
 
 	

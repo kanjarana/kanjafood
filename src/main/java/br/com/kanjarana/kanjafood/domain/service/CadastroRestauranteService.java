@@ -6,7 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 
 import br.com.kanjarana.kanjafood.domain.exception.EntidadeEmUsoException;
-import br.com.kanjarana.kanjafood.domain.exception.EntidadeNaoEncontradaException;
+import br.com.kanjarana.kanjafood.domain.exception.RestauranteNaoEncontradoException;
 import br.com.kanjarana.kanjafood.domain.model.Cozinha;
 import br.com.kanjarana.kanjafood.domain.model.Restaurante;
 import br.com.kanjarana.kanjafood.domain.repository.RestauranteRepository;
@@ -14,9 +14,9 @@ import br.com.kanjarana.kanjafood.domain.repository.RestauranteRepository;
 @Controller
 public class CadastroRestauranteService {
 	
-	private static final String MSG_RESTAURANTE_EM_USO = "Restaurante de código %d não pode ser excluída, pois está em uso.";
+	private static final String MSG_RESTAURANTE_EM_USO 
+			= "Restaurante de código %d não pode ser excluída, pois está em uso.";
 
-	private static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Não existe um cadastro de restaurante com o código %d.";
 
 	@Autowired
 	private RestauranteRepository restauranteRepository;
@@ -48,16 +48,14 @@ public class CadastroRestauranteService {
 						String.format(MSG_RESTAURANTE_EM_USO, restauranteId));
 			}
 			catch (EmptyResultDataAccessException e) {
-				throw new EntidadeNaoEncontradaException(
-						String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, restauranteId));
+				throw new RestauranteNaoEncontradoException(restauranteId);
 			}
 	}
 	
 	
 	public Restaurante buscarOuFalhar(Long restauranteId) {
 		return restauranteRepository.findById(restauranteId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, restauranteId)));
+				.orElseThrow(() -> new RestauranteNaoEncontradoException(restauranteId));
 	}
 	
 }

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.kanjarana.kanjafood.domain.exception.CozinhaNaoEncontradaException;
+import br.com.kanjarana.kanjafood.domain.exception.NegocioException;
 import br.com.kanjarana.kanjafood.domain.model.Restaurante;
 import br.com.kanjarana.kanjafood.domain.repository.CozinhaRepository;
 import br.com.kanjarana.kanjafood.domain.repository.RestauranteRepository;
@@ -71,10 +73,15 @@ public class RestauranteController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Restaurante adicionar(@RequestBody Restaurante restaurante) {
+		try {
 			return cadastroRestaurante.salvar(restaurante);
+		}
+		catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
 	}
 	
-
+	
 /*	
 	@PutMapping("/{restauranteId}")
 	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, 
@@ -106,8 +113,12 @@ public class RestauranteController {
 			
 		BeanUtils.copyProperties(restaurante, restauranteAtual, 
 				"id", "formasPagamento", "endereco", "dataCadastro", "produtos" );	
-				
-		return cadastroRestaurante.salvar(restauranteAtual);
+		try {
+			return cadastroRestaurante.salvar(restauranteAtual);
+		} 
+		catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
 	}
 	
 	
