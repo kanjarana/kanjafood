@@ -13,6 +13,11 @@ import br.com.kanjarana.kanjafood.domain.repository.CozinhaRepository;
 @Service
 public class CadastroCozinhaService {
 	
+	private static final String MSG_COZINHA_EM_USO = "Cozinha de código %d não pode ser excluída, pois está em uso.";
+
+	private static final String MSG_COZINHA_NAO_ENCONTRADA 
+		= "Não existe um cadastro de cozinha com o código %d.";
+	
 	@Autowired
 	CozinhaRepository cozinhaRepository;
 	
@@ -27,12 +32,26 @@ public class CadastroCozinhaService {
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-					String.format("Cozinha de código %d não pode ser excluída, pois está em uso.", cozinhaId));
+					String.format(MSG_COZINHA_EM_USO, cozinhaId));
 		}
 		catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe um cadastro de cozinha com o código %d.", cozinhaId));
+					String.format(MSG_COZINHA_NAO_ENCONTRADA, cozinhaId));
 		}
+	}
+	
+	public Cozinha buscarOuFalhar(Long cozinhaId) {
+		return cozinhaRepository.findById(cozinhaId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(
+						String.format(MSG_COZINHA_NAO_ENCONTRADA, cozinhaId)));
 	}
 
 }
+
+
+
+
+
+
+
+

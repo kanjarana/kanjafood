@@ -56,7 +56,7 @@ public class Pedido {
 	private StatusPedido status;
 	
 	@Embedded
-	private EnderecoEntrega enderecoEntrega;
+	private Endereco enderecoEntrega;
 
 	
 	@ManyToOne	
